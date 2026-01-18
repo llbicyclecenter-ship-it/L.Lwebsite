@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset
-xmlns="https://www.sitemaps.org/schemas/siteemap/0.9">
-<url>
-<loc>https://github.com/llbicyclecenter-ship-it/L.Lwebsite.git/</loc>
-</url>
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://github.com/llbicyclecenter-ship-it/L.Lwebsite</loc>
+  </url>
 </urlset>
