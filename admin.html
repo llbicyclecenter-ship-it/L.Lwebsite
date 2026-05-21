@@ -54,18 +54,19 @@
         /* ── ADMIN LAYOUT ── */
         #adminScreen { display:none; }
         .topbar {
-            background:var(--primary); color:white; padding:14px 28px;
+            background:var(--primary); color:white; padding:12px 16px;
             display:flex; justify-content:space-between; align-items:center;
             position:sticky; top:0; z-index:100;
             box-shadow:0 2px 10px rgba(0,0,0,0.15);
+            flex-wrap:wrap; gap:8px;
         }
-        .topbar h1 { font-size:1.2rem; }
-        .topbar .topbar-right { display:flex; align-items:center; gap:16px; font-size:0.9rem; }
-        .topbar .user-email { opacity:0.85; }
+        .topbar h1 { font-size:1rem; white-space:nowrap; }
+        .topbar .topbar-right { display:flex; align-items:center; gap:10px; font-size:0.82rem; flex-shrink:0; }
+        .topbar .user-email { opacity:0.85; max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
         .logout-btn {
             background:rgba(255,255,255,0.2); border:none; color:white;
-            padding:7px 16px; border-radius:6px; cursor:pointer; font-size:0.88rem;
-            transition:background 0.2s;
+            padding:6px 12px; border-radius:6px; cursor:pointer; font-size:0.82rem;
+            transition:background 0.2s; white-space:nowrap;
         }
         .logout-btn:hover { background:rgba(255,255,255,0.35); }
 
@@ -186,7 +187,8 @@
 
         @media(max-width:640px) {
             .form-grid { grid-template-columns:1fr; }
-            .topbar h1 { font-size:1rem; }
+            .topbar h1 { font-size:0.9rem; }
+            .topbar .user-email { display:none; }
             .admin-body { padding:16px 12px; }
             .product-table thead { display:none; }
             .product-table td { display:block; padding:8px 12px; }
