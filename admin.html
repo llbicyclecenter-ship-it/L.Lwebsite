@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel — L.L Bicycle Center</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; }
+        :root {
+            --primary: #2c5aa0;
+            --danger: #e63946;
+            --success: #4CAF50;
+            --light: #f4f6fb;
+            --dark: #333;
+            --gray: #777;
+            --border: #dde3ee;
+        }
+        body { background: var(--light); color: var(--dark); min-height: 100vh; }
+
+        /* ── LOGIN SCREEN ── */
+        #loginScreen {
+            display:flex; align-items:center; justify-content:center;
+            min-height:100vh; background: linear-gradient(135deg,#2c5aa0,#1e3d6d);
+        }
+        .login-box {
+            background:white; border-radius:16px; padding:48px 40px;
+            width:100%; max-width:420px; box-shadow:0 20px 60px rgba(0,0,0,0.2);
+            text-align:center;
+        }
+        .login-box .logo { font-size:2.5rem; color:var(--primary); margin-bottom:8px; }
+        .login-box h2 { color:var(--primary); margin-bottom:6px; }
+        .login-box p { color:var(--gray); font-size:0.9rem; margin-bottom:28px; }
+        .login-box input {
+            width:100%; padding:12px 16px; border:1px solid var(--border);
+            border-radius:8px; font-size:1rem; margin-bottom:14px; outline:none;
+            transition:border 0.2s;
+        }
+        .login-box input:focus { border-color:var(--primary); }
+        .login-box button {
+            width:100%; padding:13px; background:var(--primary); color:white;
+            border:none; border-radius:8px; font-size:1rem; font-weight:600;
+            cursor:pointer; transition:background 0.2s;
+        }
+        .login-box button:hover { background:#1e3d6d; }
+        .login-error { color:var(--danger); font-size:0.88rem; margin-top:10px; min-height:20px; }
+
+        /* ── ADMIN LAYOUT ── */
+        #adminScreen { display:none; }
+        .topbar {
+            background:var(--primary); color:white; padding:14px 28px;
+            display:flex; justify-content:space-between; align-items:center;
+            position:sticky; top:0; z-index:100;
+            box-shadow:0 2px 10px rgba(0,0,0,0.15);
+        }
+        .topbar h1 { font-size:1.2rem; }
+        .topbar .topbar-right { display:flex; align-items:center; gap:16px; font-size:0.9rem; }
+        .topbar .user-email { opacity:0.85; }
+        .logout-btn {
+            background:rgba(255,255,255,0.2); border:none; color:white;
+            padding:7px 16px; border-radius:6px; cursor:pointer; font-size:0.88rem;
+            transition:background 0.2s;
+        }
+        .logout-btn:hover { background:rgba(255,255,255,0.35); }
+
+        .admin-body { max-width:1100px; margin:0 auto; padding:30px 20px; }
+
+        /* ── TABS ── */
+        .tabs { display:flex; gap:4px; margin-bottom:28px; border-bottom:2px solid var(--border); }
+        .tab-btn {
+            padding:10px 22px; border:none; background:none; cursor:pointer;
+            font-size:0.95rem; font-weight:600; color:var(--gray);
+            border-bottom:3px solid transparent; margin-bottom:-2px;
+            transition:all 0.2s;
+        }
+        .tab-btn.active { color:var(--primary); border-bottom-color:var(--primary); }
+        .tab-btn:hover { color:var(--primary); }
+        .tab-content { display:none; }
+        .tab-content.active { display:block; }
+
+        /* ── CARDS / PANELS ── */
+        .panel {
+            background:white; border-radius:12px; padding:28px;
+            box-shadow:0 2px 12px rgba(0,0,0,0.06); margin-bottom:24px;
+        }
+        .panel h3 { color:var(--primary); margin-bottom:20px; font-size:1.15rem; }
+
+        /* ── FORM ── */
+        .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+        .form-group { display:flex; flex-direction:column; gap:6px; }
+        .form-group.full { grid-column:1/-1; }
+        .form-group label { font-weight:600; font-size:0.88rem; color:var(--dark); }
+        .form-group input, .form-group textarea, .form-group select {
+            padding:10px 14px; border:1px solid var(--border); border-radius:8px;
+            font-size:0.95rem; outline:none; transition:border 0.2s;
+        }
+        .form-group input:focus, .form-group textarea:focus { border-color:var(--primary); }
+        .form-group textarea { resize:vertical; min-height:80px; }
+
+        /* image upload area */
+        .upload-area {
+            border:2px dashed var(--border); border-radius:10px; padding:24px;
+            text-align:center; cursor:pointer; transition:border 0.2s; position:relative;
+        }
+        .upload-area:hover, .upload-area.dragover { border-color:var(--primary); background:#f0f4ff; }
+        .upload-area input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; }
+        .upload-area i { font-size:2rem; color:var(--primary); margin-bottom:8px; }
+        .upload-area p { color:var(--gray); font-size:0.88rem; }
+        #imagePreview { max-width:100%; max-height:160px; border-radius:8px; margin-top:12px; display:none; }
+        .upload-progress {
+            background:#eee; border-radius:4px; height:6px; margin-top:10px; display:none;
+        }
+        .upload-progress-bar { background:var(--primary); height:100%; border-radius:4px; width:0; transition:width 0.3s; }
+
+        .btn { display:inline-flex; align-items:center; gap:8px; padding:11px 24px; border-radius:8px; font-weight:600; font-size:0.95rem; cursor:pointer; border:none; transition:all 0.2s; }
+        .btn-primary { background:var(--primary); color:white; }
+        .btn-primary:hover { background:#1e3d6d; }
+        .btn-primary:disabled { background:#aaa; cursor:not-allowed; }
+        .btn-danger { background:var(--danger); color:white; }
+        .btn-danger:hover { background:#c1121f; }
+        .btn-sm { padding:6px 14px; font-size:0.82rem; }
+        .btn-outline { background:none; border:1px solid var(--border); color:var(--dark); }
+        .btn-outline:hover { border-color:var(--primary); color:var(--primary); }
+
+        /* ── PRODUCT TABLE ── */
+        .product-table { width:100%; border-collapse:collapse; }
+        .product-table th {
+            text-align:left; padding:10px 14px; font-size:0.82rem; text-transform:uppercase;
+            letter-spacing:0.05em; color:var(--gray); border-bottom:2px solid var(--border);
+        }
+        .product-table td { padding:14px; border-bottom:1px solid var(--border); vertical-align:middle; }
+        .product-table tr:last-child td { border-bottom:none; }
+        .product-table tr:hover td { background:#fafbff; }
+        .product-thumb { width:60px; height:48px; object-fit:cover; border-radius:6px; }
+        .status-badge {
+            display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.78rem; font-weight:600;
+        }
+        .status-active { background:#e8f5e9; color:#388e3c; }
+        .status-hidden { background:#fff3e0; color:#f57c00; }
+
+        /* ── MESSAGES TABLE ── */
+        .msg-table { width:100%; border-collapse:collapse; }
+        .msg-table th { text-align:left; padding:10px 14px; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gray); border-bottom:2px solid var(--border); }
+        .msg-table td { padding:12px 14px; border-bottom:1px solid var(--border); font-size:0.9rem; vertical-align:top; }
+        .msg-table tr:hover td { background:#fafbff; }
+        .unread td { font-weight:600; }
+        .msg-preview { color:var(--gray); font-size:0.85rem; margin-top:2px; }
+
+        /* ── STATS ── */
+        .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:28px; }
+        .stat-card { background:white; border-radius:12px; padding:22px; box-shadow:0 2px 12px rgba(0,0,0,0.06); text-align:center; }
+        .stat-card .stat-number { font-size:2.2rem; font-weight:700; color:var(--primary); }
+        .stat-card .stat-label { color:var(--gray); font-size:0.88rem; margin-top:4px; }
+
+        /* ── TOAST ── */
+        #toast {
+            position:fixed; bottom:28px; left:50%; transform:translateX(-50%);
+            padding:13px 26px; border-radius:8px; color:white; font-weight:600;
+            font-size:0.95rem; z-index:9999; display:none;
+            box-shadow:0 4px 18px rgba(0,0,0,0.18);
+        }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            position:fixed; inset:0; background:rgba(0,0,0,0.5);
+            display:flex; align-items:center; justify-content:center; z-index:500; display:none;
+        }
+        .modal-overlay.open { display:flex; }
+        .modal { background:white; border-radius:14px; padding:32px; max-width:460px; width:90%; }
+        .modal h3 { margin-bottom:12px; color:var(--dark); }
+        .modal p { color:var(--gray); margin-bottom:24px; }
+        .modal-btns { display:flex; gap:12px; justify-content:flex-end; }
+
+        /* ── SUBSCRIBERS ── */
+        .sub-list { list-style:none; }
+        .sub-list li {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:10px 0; border-bottom:1px solid var(--border); font-size:0.92rem;
+        }
+
+        @media(max-width:640px) {
+            .form-grid { grid-template-columns:1fr; }
+            .topbar h1 { font-size:1rem; }
+            .admin-body { padding:16px 12px; }
+            .product-table thead { display:none; }
+            .product-table td { display:block; padding:8px 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+    <div class="login-box">
+        <div class="logo"><i class="fas fa-bicycle"></i></div>
+        <h2>L.L Bicycle Center</h2>
+        <p>Admin Panel — Staff Login</p>
+        <input type="email" id="loginEmail" placeholder="Email address" autocomplete="email">
+        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+        <button id="loginBtn" onclick="doLogin()">
+            <span id="loginBtnText">Sign In</span>
+        </button>
+        <div class="login-error" id="loginError"></div>
+    </div>
+</div>
+
+<!-- ADMIN SCREEN -->
+<div id="adminScreen">
+    <div class="topbar">
+        <h1><i class="fas fa-bicycle"></i> L.L Bicycle Center — Admin</h1>
+        <div class="topbar-right">
+            <span class="user-email" id="userEmailDisplay"></span>
+            <button class="logout-btn" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </div>
+
+    <div class="admin-body">
+
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="statProducts">—</div>
+                <div class="stat-label">Products Listed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statMessages">—</div>
+                <div class="stat-label">Messages</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statUnread">—</div>
+                <div class="stat-label">Unread Messages</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statSubscribers">—</div>
+                <div class="stat-label">Newsletter Subscribers</div>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('products')"><i class="fas fa-bicycle"></i> Products</button>
+            <button class="tab-btn" onclick="switchTab('messages')"><i class="fas fa-envelope"></i> Messages</button>
+            <button class="tab-btn" onclick="switchTab('subscribers')"><i class="fas fa-users"></i> Subscribers</button>
+        </div>
+
+        <!-- TAB: PRODUCTS -->
+        <div class="tab-content active" id="tab-products">
+
+            <!-- Add / Edit Product Form -->
+            <div class="panel">
+                <h3 id="formTitle"><i class="fas fa-plus-circle"></i> Add New Product</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Product Name *</label>
+                        <input type="text" id="prodName" placeholder="e.g. Mountain Bike Pro">
+                    </div>
+                    <div class="form-group">
+                        <label>Price (UGX) *</label>
+                        <input type="text" id="prodPrice" placeholder="e.g. 350,000 or 350,000-400,000">
+                    </div>
+                    <div class="form-group full">
+                        <label>Description *</label>
+                        <textarea id="prodDesc" placeholder="Describe the bike or product..."></textarea>
+                    </div>
+                    <div class="form-group full">
+                        <label>Product Image *</label>
+                        <div class="upload-area" id="uploadArea">
+                            <input type="file" id="imageFile" accept="image/*" onchange="previewImage(event)">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Click or drag & drop an image here<br><small>JPG, PNG, WEBP — max 5MB</small></p>
+                            <img id="imagePreview" alt="Preview">
+                        </div>
+                        <div class="upload-progress" id="uploadProgress">
+                            <div class="upload-progress-bar" id="uploadProgressBar"></div>
+                        </div>
+                        <small id="currentImageNote" style="color:var(--gray);margin-top:4px;display:none;">
+                            ℹ️ Leave empty to keep current image
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="prodStatus">
+                            <option value="active">Active (visible on site)</option>
+                            <option value="hidden">Hidden</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-top:20px; display:flex; gap:12px; flex-wrap:wrap;">
+                    <button class="btn btn-primary" id="saveBtn" onclick="saveProduct()">
+                        <i class="fas fa-save"></i> <span id="saveBtnText">Save Product</span>
+                    </button>
+                    <button class="btn btn-outline" id="cancelEditBtn" onclick="cancelEdit()" style="display:none;">
+                        <i class="fas fa-times"></i> Cancel Edit
+                    </button>
+                </div>
+            </div>
+
+            <!-- Products List -->
+            <div class="panel">
+                <h3><i class="fas fa-list"></i> All Products</h3>
+                <div id="productsList">
+                    <p style="color:var(--gray);text-align:center;padding:20px;">Loading products...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: MESSAGES -->
+        <div class="tab-content" id="tab-messages">
+            <div class="panel">
+                <h3><i class="fas fa-envelope-open-text"></i> Customer Messages</h3>
+                <div id="messagesList">
+                    <p style="color:var(--gray);text-align:center;padding:20px;">Loading messages...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: SUBSCRIBERS -->
+        <div class="tab-content" id="tab-subscribers">
+            <div class="panel">
+                <h3><i class="fas fa-users"></i> Newsletter Subscribers</h3>
+                <div id="subscribersList">
+                    <p style="color:var(--gray);text-align:center;padding:20px;">Loading subscribers...</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal">
+        <h3>Delete Product?</h3>
+        <p>This will permanently remove the product from your website. This cannot be undone.</p>
+        <div class="modal-btns">
+            <button class="btn btn-outline" onclick="closeDeleteModal()">Cancel</button>
+            <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+
+<script type="module">
+    import { initializeApp }         from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+                                     from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc,
+             serverTimestamp, query, orderBy, onSnapshot, getDoc, getDocs, where, writeBatch }
+                                     from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    // Image uploads handled via Cloudinary
+
+    const firebaseConfig = {
+        apiKey:            "AIzaSyDF7YEpAmcmSczPBFqK9vdYN2_o_HjeQvc",
+        authDomain:        "ll-bicycle-center.firebaseapp.com",
+        projectId:         "ll-bicycle-center",
+        storageBucket:     "ll-bicycle-center.firebasestorage.app",
+        messagingSenderId: "556237915832",
+        appId:             "1:556237915832:web:41c0846bed1b55eef5164d",
+        measurementId:     "G-S40D29DH2F"
+    };
+
+    const app     = initializeApp(firebaseConfig);
+    const auth    = getAuth(app);
+    const db      = getFirestore(app);
+    const CLOUDINARY_CLOUD = 'droecocgs';
+    const CLOUDINARY_PRESET = 'll_bikes';
+
+    let editingId       = null;
+    let editingImageUrl = null;
+    let deleteTargetId  = null;
+    let deleteImageUrl  = null;
+
+    // ── AUTH ─────────────────────────────────────────────────────────────────
+    window.doLogin = async () => {
+        const email = document.getElementById("loginEmail").value.trim();
+        const pass  = document.getElementById("loginPassword").value;
+        const errEl = document.getElementById("loginError");
+        const btn   = document.getElementById("loginBtn");
+        errEl.textContent = "";
+        btn.disabled = true;
+        document.getElementById("loginBtnText").textContent = "Signing in…";
+        try {
+            await signInWithEmailAndPassword(auth, email, pass);
+        } catch (e) {
+            errEl.textContent = e.code === "auth/invalid-credential"
+                ? "Wrong email or password."
+                : "Login failed: " + e.message;
+            btn.disabled = false;
+            document.getElementById("loginBtnText").textContent = "Sign In";
+        }
+    };
+
+    window.doLogout = () => signOut(auth);
+
+    // Allow pressing Enter on login form
+    ["loginEmail","loginPassword"].forEach(id => {
+        document.getElementById(id).addEventListener("keydown", e => {
+            if (e.key === "Enter") window.doLogin();
+        });
+    });
+
+    onAuthStateChanged(auth, user => {
+        if (user) {
+            document.getElementById("loginScreen").style.display  = "none";
+            document.getElementById("adminScreen").style.display  = "block";
+            document.getElementById("userEmailDisplay").textContent = user.email;
+            loadAll();
+        } else {
+            document.getElementById("loginScreen").style.display  = "flex";
+            document.getElementById("adminScreen").style.display  = "none";
+        }
+    });
+
+    // ── LOAD ALL DATA ────────────────────────────────────────────────────────
+    function loadAll() {
+        loadProducts();
+        loadMessages();
+        loadSubscribers();
+    }
+
+    // ── PRODUCTS ─────────────────────────────────────────────────────────────
+    function loadProducts() {
+        const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+        onSnapshot(q, snap => {
+            document.getElementById("statProducts").textContent = snap.size;
+            if (snap.empty) {
+                document.getElementById("productsList").innerHTML =
+                    `<p style="color:var(--gray);text-align:center;padding:20px;">No products yet. Add your first one above!</p>`;
+                return;
+            }
+            const rows = snap.docs.map(d => {
+                const p = d.data();
+                return `
+                <tr>
+                    <td><img src="${p.imageUrl}" class="product-thumb" onerror="this.src='https://via.placeholder.com/60x48?text=No+Img'"></td>
+                    <td><strong>${p.name}</strong></td>
+                    <td>UGX ${p.price}</td>
+                    <td><p style="max-width:220px;font-size:0.85rem;color:var(--gray)">${p.description?.substring(0,80)}${p.description?.length>80?'…':''}</p></td>
+                    <td><span class="status-badge ${p.status==='active'?'status-active':'status-hidden'}">${p.status||'active'}</span></td>
+                    <td>
+                        <button class="btn btn-outline btn-sm" onclick="startEdit('${d.id}')"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="btn btn-danger btn-sm" style="margin-left:6px" onclick="openDeleteModal('${d.id}','${p.imageUrl}')"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>`;
+            }).join("");
+            document.getElementById("productsList").innerHTML =
+                `<table class="product-table"><thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Description</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table>`;
+        });
+    }
+
+    window.previewImage = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const prev = document.getElementById("imagePreview");
+        prev.src = URL.createObjectURL(file);
+        prev.style.display = "block";
+    };
+
+    window.saveProduct = async () => {
+        const name   = document.getElementById("prodName").value.trim();
+        const price  = document.getElementById("prodPrice").value.trim();
+        const desc   = document.getElementById("prodDesc").value.trim();
+        const status = document.getElementById("prodStatus").value;
+        const file   = document.getElementById("imageFile").files[0];
+
+        if (!name || !price || !desc) { showToast("Please fill in all fields.", "error"); return; }
+        if (!editingId && !file) { showToast("Please select an image.", "error"); return; }
+
+        const btn = document.getElementById("saveBtn");
+        btn.disabled = true;
+        document.getElementById("saveBtnText").textContent = "Saving…";
+
+        try {
+            let imageUrl = editingImageUrl;
+
+            if (file) {
+                // Upload image to Firebase Storage
+                document.getElementById("uploadProgress").style.display = "block";
+                document.getElementById("uploadProgressBar").style.width = "40%";
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("upload_preset", CLOUDINARY_PRESET);
+                const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
+                    method: "POST", body: formData
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error?.message || "Upload failed");
+                imageUrl = data.secure_url;
+                document.getElementById("uploadProgressBar").style.width = "100%";
+                document.getElementById("uploadProgress").style.display = "none";
+            }
+
+            const data = { name, price, description: desc, imageUrl, status, updatedAt: serverTimestamp() };
+
+            if (editingId) {
+                await updateDoc(doc(db, "products", editingId), data);
+                showToast("✅ Product updated!");
+            } else {
+                data.createdAt = serverTimestamp();
+                await addDoc(collection(db, "products"), data);
+                showToast("✅ Product added!");
+            }
+            cancelEdit();
+        } catch (e) {
+            console.error(e);
+            showToast("❌ Save failed: " + e.message, "error");
+        } finally {
+            btn.disabled = false;
+            document.getElementById("saveBtnText").textContent = editingId ? "Update Product" : "Save Product";
+        }
+    };
+
+    window.startEdit = async (id) => {
+        const snap = await getDoc(doc(db, "products", id));
+        if (!snap.exists()) return;
+        const p = snap.data();
+        editingId       = id;
+        editingImageUrl = p.imageUrl;
+
+        document.getElementById("formTitle").innerHTML        = '<i class="fas fa-edit"></i> Edit Product';
+        document.getElementById("prodName").value             = p.name;
+        document.getElementById("prodPrice").value            = p.price;
+        document.getElementById("prodDesc").value             = p.description;
+        document.getElementById("prodStatus").value           = p.status || "active";
+        document.getElementById("saveBtnText").textContent    = "Update Product";
+        document.getElementById("cancelEditBtn").style.display = "inline-flex";
+        document.getElementById("currentImageNote").style.display = "block";
+        const prev = document.getElementById("imagePreview");
+        prev.src = p.imageUrl; prev.style.display = "block";
+
+        // Scroll to form
+        document.getElementById("formTitle").scrollIntoView({ behavior:"smooth", block:"center" });
+    };
+
+    window.cancelEdit = () => {
+        editingId = null; editingImageUrl = null;
+        document.getElementById("formTitle").innerHTML        = '<i class="fas fa-plus-circle"></i> Add New Product';
+        document.getElementById("prodName").value             = "";
+        document.getElementById("prodPrice").value            = "";
+        document.getElementById("prodDesc").value             = "";
+        document.getElementById("prodStatus").value           = "active";
+        document.getElementById("saveBtnText").textContent    = "Save Product";
+        document.getElementById("cancelEditBtn").style.display = "none";
+        document.getElementById("currentImageNote").style.display = "none";
+        document.getElementById("imageFile").value            = "";
+        const prev = document.getElementById("imagePreview");
+        prev.src = ""; prev.style.display = "none";
+    };
+
+    window.openDeleteModal = (id, imageUrl) => {
+        deleteTargetId = id; deleteImageUrl = imageUrl;
+        document.getElementById("deleteModal").classList.add("open");
+        document.getElementById("confirmDeleteBtn").onclick = confirmDelete;
+    };
+    window.closeDeleteModal = () => {
+        document.getElementById("deleteModal").classList.remove("open");
+        deleteTargetId = null; deleteImageUrl = null;
+    };
+    async function confirmDelete() {
+        if (!deleteTargetId) return;
+        try {
+            await deleteDoc(doc(db, "products", deleteTargetId));
+            // Image hosted on Cloudinary — deletion optional via Cloudinary API
+            showToast("🗑️ Product deleted.");
+        } catch (e) {
+            showToast("❌ Delete failed.", "error");
+        }
+        closeDeleteModal();
+    }
+
+    // ── MESSAGES ─────────────────────────────────────────────────────────────
+    function loadMessages() {
+        const q = query(collection(db, "messages"), orderBy("submittedAt", "desc"));
+        onSnapshot(q, snap => {
+            const unread = snap.docs.filter(d => d.data().read === false).length;
+            document.getElementById("statMessages").textContent = snap.size;
+            document.getElementById("statUnread").textContent   = unread;
+            if (snap.empty) {
+                document.getElementById("messagesList").innerHTML =
+                    `<p style="color:var(--gray);text-align:center;padding:20px;">No messages yet.</p>`;
+                return;
+            }
+            const rows = snap.docs.map(d => {
+                const m   = d.data();
+                const ts  = m.submittedAt?.toDate?.()?.toLocaleString("en-UG") || "—";
+                return `
+                <tr class="${m.read ? '' : 'unread'}" id="msg-${d.id}">
+                    <td>
+                        <div>${m.name}</div>
+                        <div style="font-size:0.8rem;color:var(--gray)">${m.email}</div>
+                    </td>
+                    <td>
+                        <div>${m.subject}</div>
+                        <div class="msg-preview">${m.message?.substring(0,80)}…</div>
+                    </td>
+                    <td style="white-space:nowrap;font-size:0.82rem;color:var(--gray)">${ts}</td>
+                    <td>
+                        ${!m.read ? `<button class="btn btn-outline btn-sm" onclick="markRead('${d.id}')"><i class="fas fa-check"></i> Mark read</button>` : '<span style="color:var(--gray);font-size:0.82rem">Read</span>'}
+                        <a href="mailto:${m.email}?subject=Re: ${encodeURIComponent(m.subject)}" class="btn btn-primary btn-sm" style="margin-left:6px"><i class="fas fa-reply"></i> Reply</a>
+                    </td>
+                </tr>`;
+            }).join("");
+            document.getElementById("messagesList").innerHTML =
+                `<table class="msg-table"><thead><tr><th>From</th><th>Message</th><th>Date</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table>`;
+        });
+    }
+
+    window.markRead = async (id) => {
+        await updateDoc(doc(db, "messages", id), { read: true });
+    };
+
+    // ── SUBSCRIBERS ──────────────────────────────────────────────────────────
+    function loadSubscribers() {
+        const q = query(collection(db, "subscribers"), orderBy("subscribedAt", "desc"));
+        onSnapshot(q, snap => {
+            document.getElementById("statSubscribers").textContent = snap.size;
+            if (snap.empty) {
+                document.getElementById("subscribersList").innerHTML =
+                    `<p style="color:var(--gray);text-align:center;padding:20px;">No subscribers yet.</p>`;
+                return;
+            }
+            const items = snap.docs.map(d => {
+                const s  = d.data();
+                const ts = s.subscribedAt?.toDate?.()?.toLocaleDateString("en-UG") || "—";
+                return `<li><span>${s.email}</span><span style="color:var(--gray);font-size:0.82rem">${ts}</span></li>`;
+            }).join("");
+            document.getElementById("subscribersList").innerHTML =
+                `<ul class="sub-list">${items}</ul>`;
+        });
+    }
+
+    // ── TABS ─────────────────────────────────────────────────────────────────
+    window.switchTab = (name) => {
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+        document.getElementById("tab-" + name).classList.add("active");
+        event.currentTarget.classList.add("active");
+    };
+
+    // ── TOAST ────────────────────────────────────────────────────────────────
+    function showToast(msg, type = "success") {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.style.background = type === "success" ? "#4CAF50" : "#e63946";
+        t.style.display = "block";
+        setTimeout(() => { t.style.display = "none"; }, 3500);
+    }
+    window.showToast = showToast;
+</script>
+
+</body>
+</html>
