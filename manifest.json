@@ -1,0 +1,27 @@
+{
+  "name": "L.L Bicycle Center",
+  "short_name": "L.L Bikes",
+  "description": "Bike repair, sales and spare parts in Wakiso-Kayunga, Uganda",
+  "start_url": "/L.Lwebsite/",
+  "scope": "/L.Lwebsite/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#2c5aa0",
+  "theme_color": "#2c5aa0",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "lifestyle"],
+  "lang": "en-UG"
+}

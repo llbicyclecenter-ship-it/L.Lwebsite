@@ -1,6 +1,14 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://github.com/llbicyclecenter-ship-it/L.Lwebsite</loc>
   </url>
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://github.com/llbicyclecenter-ship-it/L.Lwebsite</loc>
+  </url>
+>>>>>>> 373c4c54b89180d894acf007620451f58eb3bcfe
 </urlset>

@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 User-agent: *
 Allow: /
 
 Sitemap:
+=======
+User-agent: *
+Allow: /
+
+Sitemap:
+>>>>>>> 373c4c54b89180d894acf007620451f58eb3bcfe
 https://github.com/llbicyclecenter-ship-it/L.Lwebsite.git//sitemap.xml
