@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L.L Bicycle Center — Shop</title>
+    <link rel="manifest" href="manifest-shop.json">
+    <meta name="theme-color" content="#2c5aa0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="LL Bikes Shop">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
+        :root {
+            --primary: #2c5aa0;
+            --red: #e63946;
+            --green: #25D366;
+            --light: #f4f6fb;
+            --dark: #1a1a2e;
+            --gray: #666;
+            --border: #e8ecf4;
+            --card: #ffffff;
+        }
+        body { background: var(--light); color: var(--dark); min-height:100vh; }
+
+        /* ── HEADER ── */
+        .header {
+            background: var(--primary);
+            padding: 14px 16px;
+            position: sticky; top:0; z-index:100;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+        .header-inner {
+            display: flex; align-items: center; justify-content: space-between;
+            max-width: 600px; margin: 0 auto;
+        }
+        .header-logo { display:flex; align-items:center; gap:10px; }
+        .header-logo i { color:white; font-size:1.5rem; }
+        .header-logo h1 { color:white; font-size:1.1rem; font-weight:700; line-height:1.2; }
+        .header-logo span { color:#ffd700; }
+        .whatsapp-btn {
+            background: var(--green); color:white; border:none;
+            padding: 8px 14px; border-radius:20px; font-size:0.82rem;
+            font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;
+            text-decoration:none;
+        }
+
+        /* ── SEARCH & FILTER ── */
+        .search-bar {
+            background: white; padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 56px; z-index:99;
+        }
+        .search-inner { max-width:600px; margin:0 auto; }
+        .search-input-wrap {
+            position:relative; margin-bottom:10px;
+        }
+        .search-input-wrap i {
+            position:absolute; left:12px; top:50%; transform:translateY(-50%);
+            color:var(--gray); font-size:0.9rem;
+        }
+        .search-input-wrap input {
+            width:100%; padding:10px 12px 10px 36px;
+            border:1px solid var(--border); border-radius:24px;
+            font-size:0.92rem; outline:none; background:var(--light);
+        }
+        .search-input-wrap input:focus { border-color:var(--primary); background:white; }
+        .filter-chips { display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; }
+        .filter-chips::-webkit-scrollbar { display:none; }
+        .chip {
+            padding:5px 14px; border-radius:20px; font-size:0.8rem; font-weight:600;
+            border:1px solid var(--border); background:white; cursor:pointer;
+            white-space:nowrap; transition:all 0.2s; color:var(--gray);
+        }
+        .chip.active { background:var(--primary); color:white; border-color:var(--primary); }
+
+        /* ── PRODUCTS GRID ── */
+        .products-wrap { max-width:600px; margin:0 auto; padding:16px; }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+        .product-card {
+            background: var(--card); border-radius:14px;
+            overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.07);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor:pointer;
+        }
+        .product-card:active { transform:scale(0.97); }
+        .product-img {
+            width:100%; aspect-ratio:1/1; object-fit:cover;
+            background:#eee;
+        }
+        .product-body { padding:10px; }
+        .product-name {
+            font-size:0.88rem; font-weight:700; color:var(--dark);
+            margin-bottom:4px; line-height:1.3;
+        }
+        .product-price {
+            font-size:0.82rem; font-weight:700; color:var(--red);
+            margin-bottom:8px;
+        }
+        .inquire-btn {
+            width:100%; padding:8px; background:var(--green); color:white;
+            border:none; border-radius:8px; font-size:0.8rem; font-weight:600;
+            cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;
+        }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            position:fixed; inset:0; background:rgba(0,0,0,0.6);
+            z-index:200; display:none; align-items:flex-end;
+        }
+        .modal-overlay.open { display:flex; }
+        .modal {
+            background:white; border-radius:20px 20px 0 0;
+            width:100%; max-height:90vh; overflow-y:auto;
+            padding:20px; animation:slideUp 0.3s ease;
+        }
+        @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+        .modal-img { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:12px; margin-bottom:16px; }
+        .modal-name { font-size:1.2rem; font-weight:700; margin-bottom:6px; }
+        .modal-price { font-size:1.1rem; font-weight:700; color:var(--red); margin-bottom:10px; }
+        .modal-desc { color:var(--gray); font-size:0.9rem; line-height:1.6; margin-bottom:20px; }
+        .modal-whatsapp {
+            width:100%; padding:14px; background:var(--green); color:white;
+            border:none; border-radius:12px; font-size:1rem; font-weight:700;
+            cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;
+            text-decoration:none;
+        }
+        .modal-close {
+            position:absolute; top:16px; right:16px; background:var(--light);
+            border:none; width:36px; height:36px; border-radius:50%; font-size:1.1rem;
+            cursor:pointer; display:flex; align-items:center; justify-content:center;
+        }
+        .modal-inner { position:relative; }
+
+        /* ── EMPTY / LOADING ── */
+        .empty-state {
+            text-align:center; padding:60px 20px; color:var(--gray);
+            grid-column: 1/-1;
+        }
+        .empty-state i { font-size:3rem; color:var(--border); margin-bottom:12px; }
+        .spinner { text-align:center; padding:60px; grid-column:1/-1; }
+        .spinner i { font-size:2rem; color:var(--primary); }
+
+        /* ── BOTTOM NAV ── */
+        .bottom-nav {
+            position:fixed; bottom:0; left:0; right:0;
+            background:white; border-top:1px solid var(--border);
+            display:flex; padding:8px 0 20px;
+            box-shadow:0 -2px 10px rgba(0,0,0,0.06);
+        }
+        .nav-item {
+            flex:1; display:flex; flex-direction:column; align-items:center;
+            gap:3px; font-size:0.68rem; color:var(--gray); cursor:pointer;
+            text-decoration:none; padding:4px 0;
+        }
+        .nav-item i { font-size:1.2rem; }
+        .nav-item.active { color:var(--primary); }
+        .page-pad { padding-bottom:80px; }
+
+        /* ── ABOUT PAGE ── */
+        .about-page { display:none; max-width:600px; margin:0 auto; padding:20px; }
+        .about-page.active { display:block; }
+        .about-card {
+            background:white; border-radius:14px; padding:20px;
+            box-shadow:0 2px 10px rgba(0,0,0,0.06); margin-bottom:14px;
+        }
+        .about-card h3 { color:var(--primary); margin-bottom:12px; font-size:1rem; }
+        .about-card p, .about-card a { color:var(--gray); font-size:0.9rem; line-height:1.7; text-decoration:none; }
+        .contact-row { display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--border); }
+        .contact-row:last-child { border-bottom:none; }
+        .contact-row i { color:var(--primary); width:20px; text-align:center; }
+        .contact-row a { color:var(--dark); font-size:0.9rem; }
+        .big-whatsapp {
+            display:flex; align-items:center; justify-content:center; gap:10px;
+            background:var(--green); color:white; padding:14px;
+            border-radius:12px; font-weight:700; font-size:1rem;
+            text-decoration:none; margin-top:8px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <div class="header-inner">
+        <div class="header-logo">
+            <i class="fas fa-bicycle"></i>
+            <h1>L.L <span>Bicycle</span> Center</h1>
+        </div>
+        <a href="https://wa.me/256705261384" target="_blank" class="whatsapp-btn">
+            <i class="fab fa-whatsapp"></i> Chat
+        </a>
+    </div>
+</div>
+
+<!-- SEARCH & FILTER -->
+<div class="search-bar" id="searchBar">
+    <div class="search-inner">
+        <div class="search-input-wrap">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search bikes, parts...">
+        </div>
+        <div class="filter-chips" id="filterChips">
+            <div class="chip active" data-cat="all">All</div>
+            <div class="chip" data-cat="Mountain Bike">Mountain</div>
+            <div class="chip" data-cat="Road Bike">Road</div>
+            <div class="chip" data-cat="City Bike">City</div>
+            <div class="chip" data-cat="Kids Bike">Kids</div>
+            <div class="chip" data-cat="Spare Parts">Parts</div>
+            <div class="chip" data-cat="Accessories">Accessories</div>
+        </div>
+    </div>
+</div>
+
+<!-- SHOP PAGE -->
+<div class="products-wrap page-pad" id="shopPage">
+    <div class="products-grid" id="productsGrid">
+        <div class="spinner"><i class="fas fa-spinner fa-spin"></i></div>
+    </div>
+</div>
+
+<!-- ABOUT PAGE -->
+<div class="about-page page-pad" id="aboutPage">
+    <div class="about-card">
+        <h3><i class="fas fa-info-circle"></i> About Us</h3>
+        <p>L.L Bicycle Center has been your trusted bike shop in Wakiso-Kayunga since 2010. We offer expert repairs, quality bikes and genuine spare parts.</p>
+    </div>
+    <div class="about-card">
+        <h3><i class="fas fa-phone"></i> Contact Us</h3>
+        <div class="contact-row"><i class="fas fa-phone"></i><a href="tel:+256705261384">+256 705 261 384</a></div>
+        <div class="contact-row"><i class="fas fa-phone"></i><a href="tel:+256778384789">+256 778 384 789</a></div>
+        <div class="contact-row"><i class="fas fa-envelope"></i><a href="mailto:llbicyclecenter@gmail.com">llbicyclecenter@gmail.com</a></div>
+        <div class="contact-row"><i class="fas fa-map-marker-alt"></i><a href="https://maps.app.goo.gl/AY1QwdVVYL5URfFm6" target="_blank">Wakiso Kayunga TC, Senge Road</a></div>
+        <div class="contact-row"><i class="fas fa-clock"></i><span style="color:var(--dark);font-size:0.9rem">Mon–Sun: 7am – 9pm</span></div>
+        <a href="https://wa.me/256705261384?text=Hello%20L.L%20Bicycle%20Center%2C%20I%20found%20you%20on%20your%20app!" target="_blank" class="big-whatsapp">
+            <i class="fab fa-whatsapp"></i> Message us on WhatsApp
+        </a>
+    </div>
+    <div class="about-card">
+        <h3><i class="fas fa-tools"></i> Our Services</h3>
+        <p>🔧 Bike Repair & Maintenance<br>🚲 Bike Sales (New & Used)<br>🔩 Spare Parts & Accessories<br>📐 Bike Fitting<br>🚴 Bike Hiring</p>
+    </div>
+</div>
+
+<!-- PRODUCT DETAIL MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal">
+        <div class="modal-inner">
+            <button class="modal-close" onclick="closeModalBtn()"><i class="fas fa-times"></i></button>
+            <img id="modalImg" class="modal-img" src="" alt="">
+            <div class="modal-name" id="modalName"></div>
+            <div class="modal-price" id="modalPrice"></div>
+            <div class="modal-desc" id="modalDesc"></div>
+            <a id="modalWhatsapp" href="#" target="_blank" class="modal-whatsapp">
+                <i class="fab fa-whatsapp"></i> Inquire on WhatsApp
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+    <a class="nav-item active" id="navShop" onclick="showPage('shop')">
+        <i class="fas fa-store"></i> Shop
+    </a>
+    <a class="nav-item" id="navAbout" onclick="showPage('about')">
+        <i class="fas fa-info-circle"></i> About
+    </a>
+</div>
+
+<script type="module">
+    import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, query, orderBy, onSnapshot, where }
+                              from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey:            "AIzaSyDF7YEpAmcmSczPBFqK9vdYN2_o_HjeQvc",
+        authDomain:        "ll-bicycle-center.firebaseapp.com",
+        projectId:         "ll-bicycle-center",
+        storageBucket:     "ll-bicycle-center.firebasestorage.app",
+        messagingSenderId: "556237915832",
+        appId:             "1:556237915832:web:41c0846bed1b55eef5164d",
+        measurementId:     "G-S40D29DH2F"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    let allProducts  = [];
+    let activeFilter = "all";
+
+    // Load products live
+    const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+    onSnapshot(q, snap => {
+        allProducts = snap.docs
+            .map(d => ({ id: d.id, ...d.data() }))
+            .filter(p => p.status === "active" || !p.status);
+        renderProducts();
+    });
+
+    function renderProducts() {
+        const search = document.getElementById("searchInput").value.toLowerCase();
+        const grid   = document.getElementById("productsGrid");
+
+        let filtered = allProducts;
+        if (activeFilter !== "all") filtered = filtered.filter(p => p.category === activeFilter);
+        if (search) filtered = filtered.filter(p =>
+            p.name?.toLowerCase().includes(search) ||
+            p.description?.toLowerCase().includes(search)
+        );
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div class="empty-state"><i class="fas fa-bicycle"></i><p>No products found</p></div>`;
+            return;
+        }
+
+        grid.innerHTML = filtered.map(p => `
+            <div class="product-card" onclick="openModal('${p.id}')">
+                <img class="product-img" src="${p.imageUrl}" alt="${p.name}"
+                     onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+                <div class="product-body">
+                    <div class="product-name">${p.name}</div>
+                    <div class="product-price">UGX ${p.price}</div>
+                    <button class="inquire-btn" onclick="event.stopPropagation();inquireWhatsApp('${p.name}','${p.price}')">
+                        <i class="fab fa-whatsapp"></i> Inquire
+                    </button>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    // Search
+    document.getElementById("searchInput").addEventListener("input", renderProducts);
+
+    // Filter chips
+    document.querySelectorAll(".chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+            document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+            chip.classList.add("active");
+            activeFilter = chip.dataset.cat;
+            renderProducts();
+        });
+    });
+
+    // Modal
+    window.openModal = (id) => {
+        const p = allProducts.find(x => x.id === id);
+        if (!p) return;
+        document.getElementById("modalImg").src      = p.imageUrl;
+        document.getElementById("modalName").textContent  = p.name;
+        document.getElementById("modalPrice").textContent = "UGX " + p.price;
+        document.getElementById("modalDesc").textContent  = p.description;
+        const msg = encodeURIComponent(`Hello L.L Bicycle Center! I'm interested in: *${p.name}* (UGX ${p.price}). Is it available?`);
+        document.getElementById("modalWhatsapp").href = `https://wa.me/256705261384?text=${msg}`;
+        document.getElementById("modalOverlay").classList.add("open");
+        document.body.style.overflow = "hidden";
+    };
+
+    window.closeModal = (e) => {
+        if (e.target === document.getElementById("modalOverlay")) closeModalBtn();
+    };
+    window.closeModalBtn = () => {
+        document.getElementById("modalOverlay").classList.remove("open");
+        document.body.style.overflow = "";
+    };
+
+    window.inquireWhatsApp = (name, price) => {
+        const msg = encodeURIComponent(`Hello L.L Bicycle Center! I'm interested in: *${name}* (UGX ${price}). Is it available?`);
+        window.open(`https://wa.me/256705261384?text=${msg}`, "_blank");
+    };
+
+    // Page navigation
+    window.showPage = (page) => {
+        document.getElementById("shopPage").style.display   = page === "shop"  ? "block" : "none";
+        document.getElementById("aboutPage").classList.toggle("active", page === "about");
+        document.getElementById("searchBar").style.display  = page === "shop"  ? "block" : "none";
+        document.getElementById("navShop").classList.toggle("active",  page === "shop");
+        document.getElementById("navAbout").classList.toggle("active", page === "about");
+    };
+
+    // Service Worker
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("sw.js").catch(() => {});
+    }
+</script>
+</body>
+</html>
