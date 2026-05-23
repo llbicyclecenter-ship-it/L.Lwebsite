@@ -14,174 +14,125 @@
     <style>
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
         :root {
-            --primary: #2c5aa0;
-            --red: #e63946;
-            --green: #25D366;
-            --light: #f4f6fb;
-            --dark: #1a1a2e;
-            --gray: #666;
-            --border: #e8ecf4;
-            --card: #ffffff;
+            --primary:#2c5aa0; --red:#e63946; --green:#25D366;
+            --light:#f4f6fb; --dark:#1a1a2e; --gray:#666;
+            --border:#e8ecf4; --card:#ffffff; --gold:#ffd700;
         }
-        body { background: var(--light); color: var(--dark); min-height:100vh; }
+        body { background:var(--light); color:var(--dark); min-height:100vh; }
 
-        /* ── HEADER ── */
-        .header {
-            background: var(--primary);
-            padding: 14px 16px;
-            position: sticky; top:0; z-index:100;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-        }
-        .header-inner {
-            display: flex; align-items: center; justify-content: space-between;
-            max-width: 600px; margin: 0 auto;
-        }
+        /* HEADER */
+        .header { background:var(--primary); padding:14px 16px; position:sticky; top:0; z-index:100; box-shadow:0 2px 12px rgba(0,0,0,0.15); }
+        .header-inner { display:flex; align-items:center; justify-content:space-between; max-width:600px; margin:0 auto; }
         .header-logo { display:flex; align-items:center; gap:10px; }
         .header-logo i { color:white; font-size:1.5rem; }
         .header-logo h1 { color:white; font-size:1.1rem; font-weight:700; line-height:1.2; }
-        .header-logo span { color:#ffd700; }
-        .whatsapp-btn {
-            background: var(--green); color:white; border:none;
-            padding: 8px 14px; border-radius:20px; font-size:0.82rem;
-            font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;
-            text-decoration:none;
-        }
+        .header-logo span { color:var(--gold); }
+        .whatsapp-btn { background:var(--green); color:white; border:none; padding:8px 14px; border-radius:20px; font-size:0.82rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; text-decoration:none; }
 
-        /* ── SEARCH & FILTER ── */
-        .search-bar {
-            background: white; padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            position: sticky; top: 56px; z-index:99;
-        }
+        /* SEARCH & FILTER */
+        .search-bar { background:white; padding:12px 16px; border-bottom:1px solid var(--border); position:sticky; top:56px; z-index:99; }
         .search-inner { max-width:600px; margin:0 auto; }
-        .search-input-wrap {
-            position:relative; margin-bottom:10px;
-        }
-        .search-input-wrap i {
-            position:absolute; left:12px; top:50%; transform:translateY(-50%);
-            color:var(--gray); font-size:0.9rem;
-        }
-        .search-input-wrap input {
-            width:100%; padding:10px 12px 10px 36px;
-            border:1px solid var(--border); border-radius:24px;
-            font-size:0.92rem; outline:none; background:var(--light);
-        }
+        .search-row { display:flex; gap:8px; margin-bottom:10px; }
+        .search-input-wrap { position:relative; flex:1; }
+        .search-input-wrap i { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--gray); font-size:0.9rem; }
+        .search-input-wrap input { width:100%; padding:10px 12px 10px 36px; border:1px solid var(--border); border-radius:24px; font-size:0.92rem; outline:none; background:var(--light); }
         .search-input-wrap input:focus { border-color:var(--primary); background:white; }
+        .price-filter-btn { background:var(--light); border:1px solid var(--border); border-radius:24px; padding:0 14px; font-size:0.82rem; font-weight:600; color:var(--gray); cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:6px; }
+        .price-filter-btn.active { background:var(--primary); color:white; border-color:var(--primary); }
         .filter-chips { display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; }
         .filter-chips::-webkit-scrollbar { display:none; }
-        .chip {
-            padding:5px 14px; border-radius:20px; font-size:0.8rem; font-weight:600;
-            border:1px solid var(--border); background:white; cursor:pointer;
-            white-space:nowrap; transition:all 0.2s; color:var(--gray);
-        }
+        .chip { padding:5px 14px; border-radius:20px; font-size:0.8rem; font-weight:600; border:1px solid var(--border); background:white; cursor:pointer; white-space:nowrap; transition:all 0.2s; color:var(--gray); }
         .chip.active { background:var(--primary); color:white; border-color:var(--primary); }
 
-        /* ── PRODUCTS GRID ── */
-        .products-wrap { max-width:600px; margin:0 auto; padding:16px; }
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-        }
-        .product-card {
-            background: var(--card); border-radius:14px;
-            overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.07);
-            transition: transform 0.2s, box-shadow 0.2s;
-            cursor:pointer;
-        }
-        .product-card:active { transform:scale(0.97); }
-        .product-img {
-            width:100%; aspect-ratio:1/1; object-fit:cover;
-            background:#eee;
-        }
-        .product-body { padding:10px; }
-        .product-name {
-            font-size:0.88rem; font-weight:700; color:var(--dark);
-            margin-bottom:4px; line-height:1.3;
-        }
-        .product-price {
-            font-size:0.82rem; font-weight:700; color:var(--red);
-            margin-bottom:8px;
-        }
-        .inquire-btn {
-            width:100%; padding:8px; background:var(--green); color:white;
-            border:none; border-radius:8px; font-size:0.8rem; font-weight:600;
-            cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;
-        }
+        /* PRICE RANGE DROPDOWN */
+        .price-dropdown { background:white; border:1px solid var(--border); border-radius:12px; padding:14px; margin-top:8px; display:none; box-shadow:0 4px 20px rgba(0,0,0,0.1); }
+        .price-dropdown.open { display:block; }
+        .price-dropdown h4 { font-size:0.85rem; color:var(--gray); margin-bottom:10px; }
+        .price-options { display:flex; flex-wrap:wrap; gap:8px; }
+        .price-opt { padding:6px 14px; border-radius:20px; font-size:0.8rem; font-weight:600; border:1px solid var(--border); background:white; cursor:pointer; color:var(--gray); transition:all 0.2s; }
+        .price-opt.active { background:var(--primary); color:white; border-color:var(--primary); }
 
-        /* ── MODAL ── */
-        .modal-overlay {
-            position:fixed; inset:0; background:rgba(0,0,0,0.6);
-            z-index:200; display:none; align-items:flex-end;
+        /* FEATURED BIKE OF THE DAY */
+        .featured-wrap { max-width:600px; margin:0 auto; padding:16px 16px 0; }
+        .featured-card {
+            background:linear-gradient(135deg,var(--primary),#1e3d6d);
+            border-radius:16px; overflow:hidden; display:flex;
+            align-items:stretch; margin-bottom:4px; cursor:pointer;
+            box-shadow:0 4px 20px rgba(44,90,160,0.3);
         }
+        .featured-img { width:130px; min-height:120px; object-fit:cover; flex-shrink:0; }
+        .featured-body { padding:14px; flex:1; }
+        .featured-badge { background:var(--gold); color:#1a1a2e; font-size:0.7rem; font-weight:800; padding:3px 10px; border-radius:20px; display:inline-block; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em; }
+        .featured-name { color:white; font-size:1rem; font-weight:700; margin-bottom:4px; }
+        .featured-price { color:#ffd97d; font-size:0.9rem; font-weight:700; margin-bottom:10px; }
+        .featured-btn { background:var(--green); color:white; border:none; padding:7px 16px; border-radius:20px; font-size:0.8rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+
+        /* PRODUCTS GRID */
+        .products-wrap { max-width:600px; margin:0 auto; padding:16px; }
+        .products-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+        .product-card { background:var(--card); border-radius:14px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.07); transition:transform 0.2s; cursor:pointer; position:relative; }
+        .product-card:active { transform:scale(0.97); }
+        .product-img { width:100%; aspect-ratio:1/1; object-fit:cover; background:#eee; }
+        .product-body { padding:10px; }
+        .product-name { font-size:0.88rem; font-weight:700; color:var(--dark); margin-bottom:4px; line-height:1.3; }
+        .product-price { font-size:0.82rem; font-weight:700; color:var(--red); margin-bottom:4px; }
+        .inquiry-count { font-size:0.72rem; color:var(--gray); margin-bottom:8px; display:flex; align-items:center; gap:4px; }
+        .inquire-btn { width:100%; padding:8px; background:var(--green); color:white; border:none; border-radius:8px; font-size:0.8rem; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; }
+        .stock-badge { position:absolute; top:8px; left:8px; font-size:0.68rem; font-weight:700; padding:3px 8px; border-radius:10px; }
+        .stock-in { background:#e8f5e9; color:#2e7d32; }
+        .stock-out { background:#ffebee; color:#c62828; }
+        .stock-order { background:#fff3e0; color:#e65100; }
+
+        /* IMAGE GALLERY in modal */
+        .gallery-wrap { position:relative; margin-bottom:16px; }
+        .gallery-main { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:12px; }
+        .gallery-thumbs { display:flex; gap:8px; margin-top:8px; overflow-x:auto; }
+        .gallery-thumbs::-webkit-scrollbar { display:none; }
+        .gallery-thumb { width:60px; height:60px; object-fit:cover; border-radius:8px; cursor:pointer; border:2px solid transparent; flex-shrink:0; }
+        .gallery-thumb.active { border-color:var(--primary); }
+        .gallery-nav { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.4); color:white; border:none; width:32px; height:32px; border-radius:50%; font-size:0.9rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+        .gallery-prev { left:8px; }
+        .gallery-next { right:8px; }
+
+        /* MODAL */
+        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:200; display:none; align-items:flex-end; }
         .modal-overlay.open { display:flex; }
-        .modal {
-            background:white; border-radius:20px 20px 0 0;
-            width:100%; max-height:90vh; overflow-y:auto;
-            padding:20px; animation:slideUp 0.3s ease;
-        }
+        .modal { background:white; border-radius:20px 20px 0 0; width:100%; max-height:92vh; overflow-y:auto; padding:20px; animation:slideUp 0.3s ease; }
         @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
-        .modal-img { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:12px; margin-bottom:16px; }
-        .modal-name { font-size:1.2rem; font-weight:700; margin-bottom:6px; }
-        .modal-price { font-size:1.1rem; font-weight:700; color:var(--red); margin-bottom:10px; }
-        .modal-desc { color:var(--gray); font-size:0.9rem; line-height:1.6; margin-bottom:20px; }
-        .modal-whatsapp {
-            width:100%; padding:14px; background:var(--green); color:white;
-            border:none; border-radius:12px; font-size:1rem; font-weight:700;
-            cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;
-            text-decoration:none;
-        }
-        .modal-close {
-            position:absolute; top:16px; right:16px; background:var(--light);
-            border:none; width:36px; height:36px; border-radius:50%; font-size:1.1rem;
-            cursor:pointer; display:flex; align-items:center; justify-content:center;
-        }
+        .modal-name { font-size:1.2rem; font-weight:700; margin-bottom:4px; }
+        .modal-price { font-size:1.1rem; font-weight:700; color:var(--red); margin-bottom:6px; }
+        .modal-meta { display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+        .modal-desc { color:var(--gray); font-size:0.9rem; line-height:1.6; margin-bottom:8px; }
+        .modal-inquiries { color:var(--gray); font-size:0.82rem; margin-bottom:20px; }
+        .modal-whatsapp { width:100%; padding:14px; background:var(--green); color:white; border:none; border-radius:12px; font-size:1rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; text-decoration:none; margin-bottom:10px; }
+        .modal-share { width:100%; padding:12px; background:var(--light); color:var(--dark); border:1px solid var(--border); border-radius:12px; font-size:0.9rem; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+        .modal-close { position:absolute; top:16px; right:16px; background:var(--light); border:none; width:36px; height:36px; border-radius:50%; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
         .modal-inner { position:relative; }
 
-        /* ── EMPTY / LOADING ── */
-        .empty-state {
-            text-align:center; padding:60px 20px; color:var(--gray);
-            grid-column: 1/-1;
-        }
-        .empty-state i { font-size:3rem; color:var(--border); margin-bottom:12px; }
+        /* EMPTY / LOADING */
+        .empty-state { text-align:center; padding:60px 20px; color:var(--gray); grid-column:1/-1; }
+        .empty-state i { font-size:3rem; color:var(--border); margin-bottom:12px; display:block; }
         .spinner { text-align:center; padding:60px; grid-column:1/-1; }
         .spinner i { font-size:2rem; color:var(--primary); }
 
-        /* ── BOTTOM NAV ── */
-        .bottom-nav {
-            position:fixed; bottom:0; left:0; right:0;
-            background:white; border-top:1px solid var(--border);
-            display:flex; padding:8px 0 20px;
-            box-shadow:0 -2px 10px rgba(0,0,0,0.06);
-        }
-        .nav-item {
-            flex:1; display:flex; flex-direction:column; align-items:center;
-            gap:3px; font-size:0.68rem; color:var(--gray); cursor:pointer;
-            text-decoration:none; padding:4px 0;
-        }
+        /* BOTTOM NAV */
+        .bottom-nav { position:fixed; bottom:0; left:0; right:0; background:white; border-top:1px solid var(--border); display:flex; padding:8px 0 20px; box-shadow:0 -2px 10px rgba(0,0,0,0.06); }
+        .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; font-size:0.68rem; color:var(--gray); cursor:pointer; text-decoration:none; padding:4px 0; }
         .nav-item i { font-size:1.2rem; }
         .nav-item.active { color:var(--primary); }
         .page-pad { padding-bottom:80px; }
 
-        /* ── ABOUT PAGE ── */
+        /* ABOUT PAGE */
         .about-page { display:none; max-width:600px; margin:0 auto; padding:20px; }
         .about-page.active { display:block; }
-        .about-card {
-            background:white; border-radius:14px; padding:20px;
-            box-shadow:0 2px 10px rgba(0,0,0,0.06); margin-bottom:14px;
-        }
+        .about-card { background:white; border-radius:14px; padding:20px; box-shadow:0 2px 10px rgba(0,0,0,0.06); margin-bottom:14px; }
         .about-card h3 { color:var(--primary); margin-bottom:12px; font-size:1rem; }
-        .about-card p, .about-card a { color:var(--gray); font-size:0.9rem; line-height:1.7; text-decoration:none; }
+        .about-card p { color:var(--gray); font-size:0.9rem; line-height:1.7; }
         .contact-row { display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--border); }
         .contact-row:last-child { border-bottom:none; }
         .contact-row i { color:var(--primary); width:20px; text-align:center; }
-        .contact-row a { color:var(--dark); font-size:0.9rem; }
-        .big-whatsapp {
-            display:flex; align-items:center; justify-content:center; gap:10px;
-            background:var(--green); color:white; padding:14px;
-            border-radius:12px; font-weight:700; font-size:1rem;
-            text-decoration:none; margin-top:8px;
-        }
+        .contact-row a { color:var(--dark); font-size:0.9rem; text-decoration:none; }
+        .big-whatsapp { display:flex; align-items:center; justify-content:center; gap:10px; background:var(--green); color:white; padding:14px; border-radius:12px; font-weight:700; font-size:1rem; text-decoration:none; margin-top:8px; }
     </style>
 </head>
 <body>
@@ -193,7 +144,7 @@
             <i class="fas fa-bicycle"></i>
             <h1>L.L <span>Bicycle</span> Center</h1>
         </div>
-        <a href="https://wa.me/256705261384" target="_blank" class="whatsapp-btn">
+        <a id="headerWhatsapp" href="https://wa.me/256705261384" target="_blank" class="whatsapp-btn">
             <i class="fab fa-whatsapp"></i> Chat
         </a>
     </div>
@@ -202,26 +153,50 @@
 <!-- SEARCH & FILTER -->
 <div class="search-bar" id="searchBar">
     <div class="search-inner">
-        <div class="search-input-wrap">
-            <i class="fas fa-search"></i>
-            <input type="text" id="searchInput" placeholder="Search bikes, parts...">
+        <div class="search-row">
+            <div class="search-input-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search bikes, parts...">
+            </div>
+            <button class="price-filter-btn" id="priceFilterBtn" onclick="togglePriceFilter()">
+                <i class="fas fa-sliders-h"></i> Budget
+            </button>
+        </div>
+        <div class="price-dropdown" id="priceDropdown">
+            <h4>Filter by price range</h4>
+            <div class="price-options">
+                <div class="price-opt active" data-min="0" data-max="999999999">All prices</div>
+                <div class="price-opt" data-min="0" data-max="200000">Under 200k</div>
+                <div class="price-opt" data-min="200000" data-max="400000">200k – 400k</div>
+                <div class="price-opt" data-min="400000" data-max="600000">400k – 600k</div>
+                <div class="price-opt" data-min="600000" data-max="1000000">600k – 1M</div>
+                <div class="price-opt" data-min="1000000" data-max="999999999">Above 1M</div>
+            </div>
         </div>
         <div class="filter-chips" id="filterChips">
-            <div class="chip active" data-cat="all">All</div>
-            <div class="chip" data-cat="Mountain Bike">Mountain</div>
-            <div class="chip" data-cat="Road Bike">Road</div>
-            <div class="chip" data-cat="City Bike">City</div>
-            <div class="chip" data-cat="Kids Bike">Kids</div>
-            <div class="chip" data-cat="Spare Parts">Parts</div>
-            <div class="chip" data-cat="Accessories">Accessories</div>
+            <div class="chip active" data-cat="all">🛒 All</div>
+            <div class="chip" data-cat="Mountain Bike">🚵 Mountain</div>
+            <div class="chip" data-cat="Road Bike">🚴 Road</div>
+            <div class="chip" data-cat="City Bike">🏙️ City</div>
+            <div class="chip" data-cat="Classy Bike">✨ Classy</div>
+            <div class="chip" data-cat="Carrier Bike">📦 Carrier</div>
+            <div class="chip" data-cat="Kids Bike">👶 Kids</div>
+            <div class="chip" data-cat="Spare Parts">🔩 Parts</div>
+            <div class="chip" data-cat="Accessories">🎒 Accessories</div>
+            <div class="chip" data-cat="Services">🛠️ Services</div>
         </div>
     </div>
 </div>
 
 <!-- SHOP PAGE -->
-<div class="products-wrap page-pad" id="shopPage">
-    <div class="products-grid" id="productsGrid">
-        <div class="spinner"><i class="fas fa-spinner fa-spin"></i></div>
+<div id="shopPage" class="page-pad">
+    <!-- Bike of the Day -->
+    <div class="featured-wrap" id="featuredWrap" style="display:none"></div>
+    <!-- Products Grid -->
+    <div class="products-wrap">
+        <div class="products-grid" id="productsGrid">
+            <div class="spinner"><i class="fas fa-spinner fa-spin"></i></div>
+        </div>
     </div>
 </div>
 
@@ -238,7 +213,7 @@
         <div class="contact-row"><i class="fas fa-envelope"></i><a href="mailto:llbicyclecenter@gmail.com">llbicyclecenter@gmail.com</a></div>
         <div class="contact-row"><i class="fas fa-map-marker-alt"></i><a href="https://maps.app.goo.gl/AY1QwdVVYL5URfFm6" target="_blank">Wakiso Kayunga TC, Senge Road</a></div>
         <div class="contact-row"><i class="fas fa-clock"></i><span style="color:var(--dark);font-size:0.9rem">Mon–Sun: 7am – 9pm</span></div>
-        <a href="https://wa.me/256705261384?text=Hello%20L.L%20Bicycle%20Center%2C%20I%20found%20you%20on%20your%20app!" target="_blank" class="big-whatsapp">
+        <a id="aboutWhatsapp" href="https://wa.me/256705261384?text=Hello%20L.L%20Bicycle%20Center!" target="_blank" class="big-whatsapp">
             <i class="fab fa-whatsapp"></i> Message us on WhatsApp
         </a>
     </div>
@@ -253,13 +228,24 @@
     <div class="modal">
         <div class="modal-inner">
             <button class="modal-close" onclick="closeModalBtn()"><i class="fas fa-times"></i></button>
-            <img id="modalImg" class="modal-img" src="" alt="">
+            <!-- Gallery -->
+            <div class="gallery-wrap">
+                <img id="galleryMain" class="gallery-main" src="" alt="">
+                <button class="gallery-nav gallery-prev" onclick="galleryNav(-1)"><i class="fas fa-chevron-left"></i></button>
+                <button class="gallery-nav gallery-next" onclick="galleryNav(1)"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="gallery-thumbs" id="galleryThumbs"></div>
             <div class="modal-name" id="modalName"></div>
             <div class="modal-price" id="modalPrice"></div>
+            <div class="modal-meta" id="modalMeta"></div>
             <div class="modal-desc" id="modalDesc"></div>
+            <div class="modal-inquiries" id="modalInquiries"></div>
             <a id="modalWhatsapp" href="#" target="_blank" class="modal-whatsapp">
                 <i class="fab fa-whatsapp"></i> Inquire on WhatsApp
             </a>
+            <button class="modal-share" onclick="shareProduct()">
+                <i class="fas fa-share-alt"></i> Share this bike
+            </button>
         </div>
     </div>
 </div>
@@ -267,17 +253,18 @@
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
     <a class="nav-item active" id="navShop" onclick="showPage('shop')">
-        <i class="fas fa-store"></i> Shop
+        <i class="fas fa-store"></i><span>Shop</span>
     </a>
     <a class="nav-item" id="navAbout" onclick="showPage('about')">
-        <i class="fas fa-info-circle"></i> About
+        <i class="fas fa-info-circle"></i><span>About</span>
     </a>
 </div>
 
 <script type="module">
-    import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, query, orderBy, onSnapshot, where }
-                              from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, query, orderBy, onSnapshot,
+             doc, getDoc, updateDoc, increment }
+        from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey:            "AIzaSyDF7YEpAmcmSczPBFqK9vdYN2_o_HjeQvc",
@@ -294,25 +281,70 @@
 
     let allProducts  = [];
     let activeFilter = "all";
+    let priceMin     = 0;
+    let priceMax     = 999999999;
+    let currentProduct = null;
+    let galleryIndex   = 0;
+    let whatsappNum    = "256705261384"; // default, overridden by settings
+
+    // Load settings (WhatsApp number)
+    getDoc(doc(db, "settings", "general")).then(snap => {
+        if (snap.exists() && snap.data().whatsapp) {
+            whatsappNum = snap.data().whatsapp.replace(/\D/g,'');
+            const wa = `https://wa.me/${whatsappNum}`;
+            document.getElementById("headerWhatsapp").href = wa;
+            document.getElementById("aboutWhatsapp").href  = wa + "?text=Hello%20L.L%20Bicycle%20Center!";
+        }
+    }).catch(()=>{});
 
     // Load products live
-    const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
-    onSnapshot(q, snap => {
-        allProducts = snap.docs
-            .map(d => ({ id: d.id, ...d.data() }))
+    onSnapshot(query(collection(db, "products"), orderBy("createdAt","desc")), snap => {
+        allProducts = snap.docs.map(d => ({ id:d.id, ...d.data() }))
             .filter(p => p.status === "active" || !p.status);
+        renderFeatured();
         renderProducts();
     });
 
+    // ── FEATURED BIKE OF THE DAY ─────────────────────────────────────────────
+    function renderFeatured() {
+        const wrap = document.getElementById("featuredWrap");
+        const featured = allProducts.find(p => p.featured === true);
+        if (!featured) { wrap.style.display = "none"; return; }
+        wrap.style.display = "block";
+        const imgs = featured.images || [featured.imageUrl];
+        wrap.innerHTML = `
+            <div class="featured-card" onclick="openModal('${featured.id}')">
+                <img class="featured-img" src="${imgs[0]}" alt="${featured.name}"
+                     onerror="this.src='https://via.placeholder.com/130x120?text=Bike'">
+                <div class="featured-body">
+                    <div class="featured-badge">⭐ Bike of the Day</div>
+                    <div class="featured-name">${featured.name}</div>
+                    <div class="featured-price">UGX ${featured.price}</div>
+                    <button class="featured-btn" onclick="event.stopPropagation();inquireWA('${featured.name}','${featured.price}')">
+                        <i class="fab fa-whatsapp"></i> Inquire
+                    </button>
+                </div>
+            </div>`;
+    }
+
+    // ── PRODUCTS GRID ────────────────────────────────────────────────────────
     function renderProducts() {
         const search = document.getElementById("searchInput").value.toLowerCase();
         const grid   = document.getElementById("productsGrid");
 
         let filtered = allProducts;
         if (activeFilter !== "all") filtered = filtered.filter(p => p.category === activeFilter);
+
+        // Price filter — parse price string, take first number found
+        filtered = filtered.filter(p => {
+            const num = parseInt((p.price || "0").toString().replace(/,/g,"").match(/\d+/)?.[0] || "0");
+            return num >= priceMin && num <= priceMax;
+        });
+
         if (search) filtered = filtered.filter(p =>
             p.name?.toLowerCase().includes(search) ||
-            p.description?.toLowerCase().includes(search)
+            p.description?.toLowerCase().includes(search) ||
+            p.category?.toLowerCase().includes(search)
         );
 
         if (filtered.length === 0) {
@@ -320,25 +352,123 @@
             return;
         }
 
-        grid.innerHTML = filtered.map(p => `
+        grid.innerHTML = filtered.map(p => {
+            const imgs     = p.images || [p.imageUrl];
+            const inquiries = p.inquiries || 0;
+            const stock    = p.stock || "in";
+            const stockLabel = stock === "in" ? "In Stock" : stock === "out" ? "Out of Stock" : "Order Now";
+            const stockClass = stock === "in" ? "stock-in" : stock === "out" ? "stock-out" : "stock-order";
+            return `
             <div class="product-card" onclick="openModal('${p.id}')">
-                <img class="product-img" src="${p.imageUrl}" alt="${p.name}"
+                <span class="stock-badge ${stockClass}">${stockLabel}</span>
+                <img class="product-img" src="${imgs[0]}" alt="${p.name}"
                      onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
                 <div class="product-body">
                     <div class="product-name">${p.name}</div>
                     <div class="product-price">UGX ${p.price}</div>
-                    <button class="inquire-btn" onclick="event.stopPropagation();inquireWhatsApp('${p.name}','${p.price}')">
+                    ${inquiries > 0 ? `<div class="inquiry-count"><i class="fas fa-fire" style="color:#e63946"></i> ${inquiries} ${inquiries===1?'person':'people'} inquired</div>` : ''}
+                    <button class="inquire-btn" onclick="event.stopPropagation();inquireWA('${p.name}','${p.price}','${p.id}')">
                         <i class="fab fa-whatsapp"></i> Inquire
                     </button>
                 </div>
-            </div>
-        `).join("");
+            </div>`;
+        }).join("");
     }
+
+    // ── MODAL ────────────────────────────────────────────────────────────────
+    window.openModal = (id) => {
+        const p = allProducts.find(x => x.id === id);
+        if (!p) return;
+        currentProduct = p;
+        const imgs = p.images?.length ? p.images : [p.imageUrl];
+        galleryIndex = 0;
+
+        // Gallery
+        document.getElementById("galleryMain").src = imgs[0];
+        const thumbs = document.getElementById("galleryThumbs");
+        if (imgs.length > 1) {
+            thumbs.innerHTML = imgs.map((src,i) =>
+                `<img class="gallery-thumb ${i===0?'active':''}" src="${src}" onclick="setGallery(${i})" onerror="this.style.display='none'">`
+            ).join("");
+            thumbs.style.display = "flex";
+            document.querySelector(".gallery-prev").style.display = "flex";
+            document.querySelector(".gallery-next").style.display = "flex";
+        } else {
+            thumbs.style.display = "none";
+            document.querySelector(".gallery-prev").style.display = "none";
+            document.querySelector(".gallery-next").style.display = "none";
+        }
+
+        document.getElementById("modalName").textContent  = p.name;
+        document.getElementById("modalPrice").textContent = "UGX " + p.price;
+
+        // Meta badges
+        const stock = p.stock || "in";
+        const stockLabel = stock==="in"?"✅ In Stock": stock==="out"?"❌ Out of Stock":"⏳ Order Now";
+        const stockColor = stock==="in"?"#2e7d32": stock==="out"?"#c62828":"#e65100";
+        document.getElementById("modalMeta").innerHTML =
+            `<span style="color:${stockColor};font-size:0.85rem;font-weight:600">${stockLabel}</span>
+             ${p.category ? `<span style="background:var(--light);padding:3px 10px;border-radius:20px;font-size:0.8rem;color:var(--gray)">${p.category}</span>` : ""}`;
+
+        document.getElementById("modalDesc").textContent  = p.description || "";
+        const inquiries = p.inquiries || 0;
+        document.getElementById("modalInquiries").innerHTML = inquiries > 0
+            ? `<i class="fas fa-fire" style="color:#e63946"></i> ${inquiries} ${inquiries===1?"person has":"people have"} inquired about this`
+            : "";
+
+        const msg = encodeURIComponent(`Hello L.L Bicycle Center! I'm interested in: *${p.name}* (UGX ${p.price}). Is it available?`);
+        document.getElementById("modalWhatsapp").href = `https://wa.me/${whatsappNum}?text=${msg}`;
+        document.getElementById("modalOverlay").classList.add("open");
+        document.body.style.overflow = "hidden";
+        window._currentModalId = id;
+    };
+
+    window.setGallery = (i) => {
+        const imgs = currentProduct?.images?.length ? currentProduct.images : [currentProduct?.imageUrl];
+        galleryIndex = i;
+        document.getElementById("galleryMain").src = imgs[i];
+        document.querySelectorAll(".gallery-thumb").forEach((t,j) => t.classList.toggle("active", i===j));
+    };
+
+    window.galleryNav = (dir) => {
+        const imgs = currentProduct?.images?.length ? currentProduct.images : [currentProduct?.imageUrl];
+        galleryIndex = (galleryIndex + dir + imgs.length) % imgs.length;
+        setGallery(galleryIndex);
+    };
+
+    window.closeModal = (e) => { if (e.target === document.getElementById("modalOverlay")) closeModalBtn(); };
+    window.closeModalBtn = () => {
+        document.getElementById("modalOverlay").classList.remove("open");
+        document.body.style.overflow = "";
+        currentProduct = null;
+    };
+
+    // Share product
+    window.shareProduct = async () => {
+        if (!currentProduct) return;
+        const url  = `${location.origin}${location.pathname}?bike=${currentProduct.id}`;
+        const text = `Check out this bike at L.L Bicycle Center: *${currentProduct.name}* — UGX ${currentProduct.price}`;
+        if (navigator.share) {
+            await navigator.share({ title: currentProduct.name, text, url }).catch(()=>{});
+        } else {
+            const wa = `https://wa.me/?text=${encodeURIComponent(text + "\n" + url)}`;
+            window.open(wa, "_blank");
+        }
+    };
+
+    // Inquire + increment counter
+    window.inquireWA = async (name, price, id) => {
+        if (id) {
+            updateDoc(doc(db, "products", id), { inquiries: increment(1) }).catch(()=>{});
+        }
+        const msg = encodeURIComponent(`Hello L.L Bicycle Center! I'm interested in: *${name}* (UGX ${price}). Is it available?`);
+        window.open(`https://wa.me/${whatsappNum}?text=${msg}`, "_blank");
+    };
 
     // Search
     document.getElementById("searchInput").addEventListener("input", renderProducts);
 
-    // Filter chips
+    // Category chips
     document.querySelectorAll(".chip").forEach(chip => {
         chip.addEventListener("click", () => {
             document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
@@ -348,46 +478,35 @@
         });
     });
 
-    // Modal
-    window.openModal = (id) => {
-        const p = allProducts.find(x => x.id === id);
-        if (!p) return;
-        document.getElementById("modalImg").src      = p.imageUrl;
-        document.getElementById("modalName").textContent  = p.name;
-        document.getElementById("modalPrice").textContent = "UGX " + p.price;
-        document.getElementById("modalDesc").textContent  = p.description;
-        const msg = encodeURIComponent(`Hello L.L Bicycle Center! I'm interested in: *${p.name}* (UGX ${p.price}). Is it available?`);
-        document.getElementById("modalWhatsapp").href = `https://wa.me/256705261384?text=${msg}`;
-        document.getElementById("modalOverlay").classList.add("open");
-        document.body.style.overflow = "hidden";
+    // Price filter
+    window.togglePriceFilter = () => {
+        document.getElementById("priceDropdown").classList.toggle("open");
+        document.getElementById("priceFilterBtn").classList.toggle("active");
     };
+    document.querySelectorAll(".price-opt").forEach(opt => {
+        opt.addEventListener("click", () => {
+            document.querySelectorAll(".price-opt").forEach(o => o.classList.remove("active"));
+            opt.classList.add("active");
+            priceMin = parseInt(opt.dataset.min);
+            priceMax = parseInt(opt.dataset.max);
+            document.getElementById("priceDropdown").classList.remove("open");
+            document.getElementById("priceFilterBtn").classList.remove("active");
+            const label = opt.textContent === "All prices" ? "Budget" : opt.textContent;
+            document.getElementById("priceFilterBtn").innerHTML = `<i class="fas fa-sliders-h"></i> ${label}`;
+            renderProducts();
+        });
+    });
 
-    window.closeModal = (e) => {
-        if (e.target === document.getElementById("modalOverlay")) closeModalBtn();
-    };
-    window.closeModalBtn = () => {
-        document.getElementById("modalOverlay").classList.remove("open");
-        document.body.style.overflow = "";
-    };
-
-    window.inquireWhatsApp = (name, price) => {
-        const msg = encodeURIComponent(`Hello L.L Bicycle Center! I'm interested in: *${name}* (UGX ${price}). Is it available?`);
-        window.open(`https://wa.me/256705261384?text=${msg}`, "_blank");
-    };
-
-    // Page navigation
+    // Page nav
     window.showPage = (page) => {
-        document.getElementById("shopPage").style.display   = page === "shop"  ? "block" : "none";
-        document.getElementById("aboutPage").classList.toggle("active", page === "about");
-        document.getElementById("searchBar").style.display  = page === "shop"  ? "block" : "none";
-        document.getElementById("navShop").classList.toggle("active",  page === "shop");
-        document.getElementById("navAbout").classList.toggle("active", page === "about");
+        document.getElementById("shopPage").style.display   = page==="shop" ? "block" : "none";
+        document.getElementById("aboutPage").classList.toggle("active", page==="about");
+        document.getElementById("searchBar").style.display  = page==="shop" ? "block" : "none";
+        document.getElementById("navShop").classList.toggle("active",  page==="shop");
+        document.getElementById("navAbout").classList.toggle("active", page==="about");
     };
 
-    // Service Worker
-    if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("sw.js").catch(() => {});
-    }
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
 </body>
 </html>
