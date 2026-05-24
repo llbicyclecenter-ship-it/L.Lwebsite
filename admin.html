@@ -434,7 +434,7 @@
 
 <script type="module">
     import { initializeApp }         from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserSessionPersistence }
                                      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc,
              serverTimestamp, query, orderBy, onSnapshot, getDoc, getDocs, where, writeBatch, setDoc }
@@ -453,6 +453,9 @@
 
     const app     = initializeApp(firebaseConfig);
     const auth    = getAuth(app);
+
+    // Only remember login for this tab session — forget on close
+    setPersistence(auth, browserSessionPersistence).catch(()=>{});
     const db      = getFirestore(app);
     const CLOUDINARY_CLOUD = 'droecocgs';
     const CLOUDINARY_PRESET = 'll_bikes';
