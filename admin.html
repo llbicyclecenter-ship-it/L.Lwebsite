@@ -150,7 +150,8 @@
         .msg-table th { text-align:left; padding:10px 14px; font-size:0.82rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--gray); border-bottom:2px solid var(--border); }
         .msg-table td { padding:12px 14px; border-bottom:1px solid var(--border); font-size:0.9rem; vertical-align:top; }
         .msg-table tr:hover td { background:#fafbff; }
-        .unread td { font-weight:600; }
+        .unread td { font-weight:600; background:#f0f4ff !important; }
+        .unread-dot { display:inline-block;width:8px;height:8px;background:var(--primary);border-radius:50%;margin-right:6px;flex-shrink:0; }
         .msg-preview { color:var(--gray); font-size:0.85rem; margin-top:2px; }
 
         /* ── STATS ── */
@@ -179,19 +180,31 @@
         .modal-btns { display:flex; gap:12px; justify-content:flex-end; }
 
         /* ── SUBSCRIBERS ── */
-        .sub-list { list-style:none; }
-        .sub-list li {
-            display:flex; align-items:center; justify-content:space-between;
-            padding:10px 0; border-bottom:1px solid var(--border); font-size:0.92rem;
+        .sub-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; }
+        .sub-card {
+            background:var(--light); border-radius:10px; padding:14px;
+            border:1px solid var(--border); display:flex; flex-direction:column; gap:4px;
         }
+        .sub-card .sub-email { font-size:0.85rem; font-weight:600; color:var(--dark); word-break:break-all; }
+        .sub-card .sub-date { font-size:0.75rem; color:var(--gray); }
+        .sub-card .sub-icon { font-size:1.4rem; color:var(--primary); margin-bottom:4px; }
 
         @media(max-width:640px) {
             .form-grid { grid-template-columns:1fr; }
             .topbar h1 { font-size:0.9rem; }
             .topbar .user-email { display:none; }
-            .admin-body { padding:16px 12px; }
-            .product-table thead { display:none; }
-            .product-table td { display:block; padding:8px 12px; }
+            .admin-body { padding:12px 10px; }
+            .panel { padding:16px; }
+            .stats-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
+            .stat-card { padding:16px 10px; }
+            .stat-card .stat-number { font-size:1.8rem; }
+            .tabs { overflow-x:auto; padding-bottom:2px; gap:0; }
+            .tabs::-webkit-scrollbar { display:none; }
+            .tab-btn { padding:8px 12px; font-size:0.82rem; white-space:nowrap; }
+            .product-table { display:block; overflow-x:auto; }
+            .msg-table { display:block; overflow-x:auto; }
+            .btn-sm { padding:5px 10px; font-size:0.78rem; }
+            .sub-grid { grid-template-columns:repeat(2,1fr); }
         }
     </style>
 </head>
@@ -203,8 +216,13 @@
         <div class="logo"><i class="fas fa-bicycle"></i></div>
         <h2>L.L Bicycle Center</h2>
         <p>Admin Panel — Staff Login</p>
-        <input type="email" id="loginEmail" placeholder="Email address" autocomplete="email">
-        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+        <input type="email" id="loginEmail" placeholder="Email address" autocomplete="off">
+        <div style="position:relative;margin-bottom:14px;">
+            <input type="password" id="loginPassword" placeholder="Password" autocomplete="new-password" style="margin-bottom:0;padding-right:44px;width:100%;">
+            <button type="button" onclick="togglePassword()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--gray);font-size:1rem;width:auto;padding:0;" id="eyeBtn">
+                <i class="fas fa-eye" id="eyeIcon"></i>
+            </button>
+        </div>
         <button id="loginBtn" onclick="doLogin()">
             <span id="loginBtnText">Sign In</span>
         </button>
@@ -446,6 +464,28 @@
     let deleteImageUrl   = null;
 
     // ── AUTH ─────────────────────────────────────────────────────────────────
+    // Clear login fields on load to prevent autofill
+    window.addEventListener("load", () => {
+        setTimeout(() => {
+            const e = document.getElementById("loginEmail");
+            const p = document.getElementById("loginPassword");
+            if (e) e.value = "";
+            if (p) p.value = "";
+        }, 100);
+    });
+
+    window.togglePassword = () => {
+        const input = document.getElementById("loginPassword");
+        const icon  = document.getElementById("eyeIcon");
+        if (input.type === "password") {
+            input.type = "text";
+            icon.className = "fas fa-eye-slash";
+        } else {
+            input.type = "password";
+            icon.className = "fas fa-eye";
+        }
+    };
+
     window.doLogin = async () => {
         const email = document.getElementById("loginEmail").value.trim();
         const pass  = document.getElementById("loginPassword").value;
@@ -483,6 +523,11 @@
         } else {
             document.getElementById("loginScreen").style.display  = "flex";
             document.getElementById("adminScreen").style.display  = "none";
+            // Always clear fields when showing login screen
+            setTimeout(() => {
+                document.getElementById("loginEmail").value    = "";
+                document.getElementById("loginPassword").value = "";
+            }, 50);
         }
     });
 
@@ -686,8 +731,8 @@
                 return `
                 <tr class="${m.read ? '' : 'unread'}" id="msg-${d.id}">
                     <td>
-                        <div>${m.name}</div>
-                        <div style="font-size:0.8rem;color:var(--gray)">${m.email}</div>
+                        <div style="display:flex;align-items:center">${m.read ? '' : '<span class="unread-dot"></span>'}<span>${m.name}</span></div>
+                        <div style="font-size:0.8rem;color:var(--gray);margin-left:14px">${m.email}</div>
                     </td>
                     <td>
                         <div>${m.subject}</div>
@@ -695,7 +740,7 @@
                     </td>
                     <td style="white-space:nowrap;font-size:0.82rem;color:var(--gray)">${ts}</td>
                     <td>
-                        ${!m.read ? `<button class="btn btn-outline btn-sm" onclick="markRead('${d.id}')"><i class="fas fa-check"></i> Mark read</button>` : '<span style="color:var(--gray);font-size:0.82rem">Read</span>'}
+                        ${!m.read ? `<button class="btn btn-outline btn-sm" onclick="markRead('${d.id}')"><i class="fas fa-envelope-open"></i> Mark read</button>` : '<span style="color:var(--gray);font-size:0.82rem"><i class="fas fa-check" style="color:var(--success)"></i> Read</span>'}
                         <a href="mailto:${m.email}?subject=Re: ${encodeURIComponent(m.subject)}" class="btn btn-primary btn-sm" style="margin-left:6px"><i class="fas fa-reply"></i> Reply</a>
                     </td>
                 </tr>`;
@@ -722,10 +767,10 @@
             const items = snap.docs.map(d => {
                 const s  = d.data();
                 const ts = s.subscribedAt?.toDate?.()?.toLocaleDateString("en-UG") || "—";
-                return `<li><span>${s.email}</span><span style="color:var(--gray);font-size:0.82rem">${ts}</span></li>`;
+                return `<div class="sub-card"><div class="sub-icon"><i class="fas fa-user-circle"></i></div><div class="sub-email">${s.email}</div><div class="sub-date"><i class="fas fa-calendar-alt"></i> ${ts}</div></div>`;
             }).join("");
             document.getElementById("subscribersList").innerHTML =
-                `<ul class="sub-list">${items}</ul>`;
+                `<div class="sub-grid">${items}</div>`;
         });
     }
 
