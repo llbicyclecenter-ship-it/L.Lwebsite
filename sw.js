@@ -1,4 +1,4 @@
-const CACHE = 'llbikes-v1';
+const CACHE = 'llbikes-v2';
 const OFFLINE = [
   '/L.Lwebsite/',
   '/L.Lwebsite/index.html',
@@ -25,6 +25,10 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') {
+    return;
+  }
+
   // Network first, fallback to cache
   e.respondWith(
     fetch(e.request)
